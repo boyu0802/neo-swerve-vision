@@ -97,7 +97,7 @@ public class SwerveModule{
     public void resetToAbsolute(){
         double angle = (getCancoderAngle().getDegrees() - angleOffset.getDegrees());
         //TODO: figure out which on to use
-        angleMotor.getPIDController().setReference(angle, ControlType.kPosition);
+        // angleMotor.getPIDController().setReference(angle, ControlType.kPosition);
         angleMotor.getEncoder().setPosition(angle);
     }
 

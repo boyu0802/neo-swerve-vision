@@ -19,8 +19,8 @@ public class Constants {
             Rotation2d.fromRotations(1) // front left
         };
         
-        public static final double[] SWERVE_DRIVE_PID = {0.0, 0.0, 0.0};
-        public static final double[] SWERVE_ANGLE_PID = {0.0, 0.0, 0.0};
+        public static final double[] SWERVE_DRIVE_PID = {0.0, 0.0, 0.0}; //kp, ki, kd
+        public static final double[] SWERVE_ANGLE_PID = {0.0, 0.0, 0.0}; 
 
         public static final double SWERVE_LENGTH = 0.0;
         public static final double SWERVE_WIDTH = 0.0;
@@ -30,6 +30,27 @@ public class Constants {
         public static final double KS = 0.0;
         public static final double KV = 0.0;
         public static final double KA = 0.0;
+
+        public static final int FRONT_RIGHT_MODULE_ID = 1;
+        public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 3;
+        public static final int FRONT_RIGHT_ANGLE_MOTOR_ID = 4;
+        public static final int FRONT_RIGHT_CAN_CODER_ID = 2;
+
+        public static final int BACK_RIGHT_MODULE_ID = 2;
+        public static final int BACK_RIGHT_DRIVE_MOTOR_ID = 1;
+        public static final int BACK_RIGHT_ANGLE_MOTOR_ID = 2;
+        public static final int BACK_RIGHT_CAN_CODER_ID = 1;
+
+        public static final int BACK_LEFT_MODULE_ID = 3;
+        public static final int BACK_LEFT_DRIVE_MOTOR_ID = 7;
+        public static final int BACK_LEFT_ANGLE_MOTOR_ID = 8;
+        public static final int BACK_LEFT_CAN_CODER_ID = 4;
+
+        public static final int FRONT_LEFT_MODULE_ID = 4;
+        public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 5;
+        public static final int FRONT_LEFT_ANGLE_MOTOR_ID = 6;
+        public static final int FRONT_LEFT_CAN_CODER_ID = 3;
+
 
         public static final IdleMode DRIV_IDLE_MODE = IdleMode.kBrake;
         public static final IdleMode ANGLE_IDLE_MODE = IdleMode.kBrake;
@@ -54,6 +75,10 @@ public class Constants {
 
         public static final AbsoluteSensorRangeValue SENSOR_RANGE = AbsoluteSensorRangeValue.Unsigned_0To1;
         public static final SensorDirectionValue SENSOR_DIRECTION = SensorDirectionValue.CounterClockwise_Positive;
+        
+        public static final boolean NAVX_INVERTED = false;
+
+        public static final double SWERVE_DRIVE_JOYSTICK_DEADBAND = 0.05;
     }
 }
 
