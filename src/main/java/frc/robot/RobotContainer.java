@@ -21,10 +21,9 @@ public class RobotContainer {
                 swerveSubsystem,
                 () -> driveController.getRawAxis(XboxController.Axis.kLeftY.value),
                 () -> driveController.getRawAxis(XboxController.Axis.kLeftX.value),
-                () -> driveController.getRawAxis(XboxController.Axis.kRightX.value),
+                () -> driveController.getRightX(),
                 () -> driveController.getLeftBumper(),
-                () -> driveController.getAButton()
-        ));
+                () -> driveController.getAButton()));
 
     configureBindings();
   }

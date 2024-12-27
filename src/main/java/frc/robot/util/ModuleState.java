@@ -4,35 +4,41 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 public class ModuleState  {
-    public static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle){
-        double targetAngle = placeInAppropriateRange(desiredState.angle.getDegrees(), currentAngle.getDegrees());
-        double targetVelocity = desiredState.speedMetersPerSecond;
+    public static SwerveModuleState optimiize(SwerveModuleState desiredState, Rotation2d currentAngle) {
+        double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
+        double targetSpeed = desiredState.speedMetersPerSecond;
         double delta = targetAngle - currentAngle.getDegrees();
-        if(Math.abs(delta) > 90){
-            targetVelocity = -targetVelocity;
-            targetAngle = (targetAngle > 90) ? (targetAngle -= 180) : (targetAngle += 180);
+
+        if (Math.abs(delta) > 90) {
+            targetSpeed = -targetSpeed;
+            targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
         }
-        return new SwerveModuleState(targetVelocity, Rotation2d.fromDegrees(targetAngle));
+        return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
     }
 
-    public static double placeInAppropriateRange(double desiredAngle, double currentAngle){
-        double upperBound;
+    private static double placeInAppropriate0To360Scope(double scopeReference, double newAngle) {
         double lowerBound;
-        double angle = currentAngle % 360;
-        if(angle < 0){
-            upperBound = currentAngle - angle;
-            lowerBound = currentAngle - angle - 360;
+        double upperBound;
+        double lowerOffest = scopeReference % 360;
+        if (lowerOffest >= 0) {
+            lowerBound = scopeReference - lowerOffest;
+            upperBound = scopeReference + (360 - lowerOffest);
+        } else {
+            upperBound = scopeReference - lowerOffest;
+            lowerBound = scopeReference - (360 + lowerOffest);
         }
-        else{
-            lowerBound = currentAngle - angle;
-            upperBound = currentAngle - angle + 360;
+        while (newAngle < lowerBound) {
+            newAngle += 360;
         }
-        while(desiredAngle > upperBound) {desiredAngle -= 360;}
-        while(desiredAngle < lowerBound) {desiredAngle += 360;}
-        if(desiredAngle - currentAngle > 180)
-            desiredAngle -= 360;
-        else if(desiredAngle - currentAngle < -180)
-            desiredAngle += 360;
-        return desiredAngle;
+        while (newAngle > upperBound) {
+            newAngle -= 360;
+        }
+        if (newAngle - scopeReference > 180) {
+            newAngle -= 360;
+        } else if (newAngle - scopeReference < -180) {
+            newAngle += 360;
+        }
+        return newAngle;
     }
 }
+

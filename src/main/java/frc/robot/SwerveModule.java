@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.util.ModuleState;
 
@@ -51,11 +52,14 @@ public class SwerveModule{
     
     
     public void setModuleState(SwerveModuleState state, boolean isOpenLoop){
-        SwerveModuleState desiredState = ModuleState.optimize(state, getModuleState().angle);
+        SwerveModuleState desiredState = ModuleState.optimiize(state, getModuleState().angle);
+
+        
+        SmartDashboard.putNumber( "mod" + moduleID + "module state angle...", desiredState.angle.getDegrees());
+        SmartDashboard.putNumber( "mod" + moduleID + "ange motor angle", angleMotor.getEncoder().getPosition());
+
         setAngle(desiredState);
         setSpeed(desiredState,isOpenLoop);
-        SwerveConstants.SWERVE_DRIVE_KINEMATICS.toSwerveModuleStates(null);
-
     }
 
     public void setAngle(SwerveModuleState state){
@@ -96,8 +100,6 @@ public class SwerveModule{
 
     public void resetToAbsolute(){
         double angle = (getCancoderAngle().getDegrees() - angleOffset.getDegrees());
-        //TODO: figure out which on to use
-        // angleMotor.getPIDController().setReference(angle, ControlType.kPosition);
         angleMotor.getEncoder().setPosition(angle);
     }
 

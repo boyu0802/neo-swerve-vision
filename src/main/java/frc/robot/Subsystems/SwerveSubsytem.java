@@ -21,6 +21,7 @@ public class SwerveSubsytem extends SubsystemBase {
     private SwerveModule[] modules;
     private AHRS Navx;
     private SwerveDriveOdometry odometry;
+    private SwerveDriveKinematics SWERVE_DRIVE_KINEMATICS;
     
     public SwerveSubsytem() {
         modules = new SwerveModule[]{
@@ -32,16 +33,22 @@ public class SwerveSubsytem extends SubsystemBase {
 
         Navx = new AHRS(SPI.Port.kMXP);
         Navx.reset();
+        
+        SWERVE_DRIVE_KINEMATICS = new SwerveDriveKinematics(
+            new Translation2d(SwerveConstants.SWERVE_LENGTH / 2, -SwerveConstants.SWERVE_WIDTH / 2), //front right 
+            new Translation2d(-SwerveConstants.SWERVE_LENGTH / 2, -SwerveConstants.SWERVE_WIDTH / 2), //back right
+            new Translation2d(-SwerveConstants.SWERVE_LENGTH / 2, SwerveConstants.SWERVE_WIDTH / 2), //back left
+            new Translation2d(SwerveConstants.SWERVE_LENGTH / 2, SwerveConstants.SWERVE_WIDTH / 2) //  front left
+        );
 
-        odometry = new SwerveDriveOdometry(SwerveConstants.SWERVE_DRIVE_KINEMATICS, Navx.getRotation2d(),getModulePositions());
+        odometry = new SwerveDriveOdometry(SWERVE_DRIVE_KINEMATICS, getYaw(),getModulePositions());
         Timer.delay(1.0);
         resetModulesToAbsolute();
     }
 
-        public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        SwerveModuleState[] swerveModuleStates =
-                SwerveConstants.SWERVE_DRIVE_KINEMATICS.toSwerveModuleStates(
-                        fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
+    public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+
+        ChassisSpeeds speeds = fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                 translation.getX(),
                                 translation.getY(),
                                 rotation,
@@ -50,23 +57,28 @@ public class SwerveSubsytem extends SubsystemBase {
                                 : new ChassisSpeeds(
                                 translation.getX(),
                                 translation.getY(),
-                                rotation)
-                );
+                                rotation);
+        SmartDashboard.putString("chassis speeds",speeds.toString());
+        SmartDashboard.putBoolean("fieldCentric", fieldRelative);
+                
+        SwerveModuleState[] swerveModuleStates = SWERVE_DRIVE_KINEMATICS.toSwerveModuleStates(speeds);
+        
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, SwerveConstants.MAX_SPEED);
+
+
 
         for(SwerveModule mod : modules){
             mod.setModuleState(swerveModuleStates[mod.moduleID], isOpenLoop);
         }
     }
 
-    /* Used by SwerveControllerCommand in Auto */
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.MAX_SPEED);
+    // public void setModuleStates(SwerveModuleState[] desiredStates) {
+    //     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.MAX_SPEED);
 
-        for(SwerveModule mod : modules){
-            mod.setModuleState(desiredStates[mod.moduleID], false);
-        }
-    }
+    //     for(SwerveModule mod : modules){
+    //         mod.setModuleState(desiredStates[mod.moduleID], false);
+    //     }
+    // }
 
     public Pose2d getPose() {
         return odometry.getPoseMeters();
@@ -97,7 +109,7 @@ public class SwerveSubsytem extends SubsystemBase {
     }
 
     public Rotation2d getYaw() {
-        return (SwerveConstants.NAVX_INVERTED) ? Rotation2d.fromDegrees(360 - Navx.getYaw()) : Rotation2d.fromDegrees(Navx.getYaw());
+        return Rotation2d.fromDegrees(Navx.getYaw());
     }
 
     public void resetModulesToAbsolute(){
@@ -113,7 +125,7 @@ public class SwerveSubsytem extends SubsystemBase {
 
         for(SwerveModule mod : modules){
             SmartDashboard.putNumber("Mod " + mod.moduleID + " Cancoder", mod.getCancoderAngle().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleID + " Integrated", mod.getModulePosition().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleID + " Integrated", mod.getEncoderAngle().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleID + " Velocity", mod.getModuleState().speedMetersPerSecond);
         }
     }
