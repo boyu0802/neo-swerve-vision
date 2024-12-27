@@ -34,7 +34,7 @@ public class SwerveCommand extends Command{
         this.visionAimSup = visionAimSup;
         this.openLoopSup = openLoopSup;
 
-        VISION_AIM_PID.setTolerance(0.2);
+        VISION_AIM_PID.setTolerance(0.02);
         //VISION_AIM_PID.setIntegratorRange(-0.5, 0.5);
     }
 
