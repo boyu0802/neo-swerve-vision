@@ -21,15 +21,16 @@ public class RobotContainer {
                 swerveSubsystem,
                 () -> driveController.getRawAxis(XboxController.Axis.kLeftY.value),
                 () -> driveController.getRawAxis(XboxController.Axis.kLeftX.value),
-                () -> driveController.getRightX(),
-                () -> driveController.getLeftBumper(),
-                () -> driveController.getAButton()));
+                driveController::getRightX,
+                driveController::getRightBumper,
+                driveController::getLeftBumper,
+                driveController::getAButton));
 
     configureBindings();
   }
 
   private void configureBindings() {
-    new JoystickButton(driveController,XboxController.Button.kRightBumper.value).onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
+    new JoystickButton(driveController,XboxController.Button.kY.value).onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
   }
 
   public Command getAutonomousCommand() {

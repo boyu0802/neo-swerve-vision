@@ -80,10 +80,10 @@ public class Constants {
         public static final double SWERVE_DRIVE_JOYSTICK_DEADBAND = 0.05;
 
 
-        // public static final double VISION_AIM_KP = 0.0;
-        // public static final double VISION_AIM_KI = 0.0;
-        // public static final double VISION_AIM_KD = 0.0;
-        // public static final String LIMELIGHT_NAME = "limelight";
+        public static final double VISION_AIM_KP = 0.5;
+        public static final double VISION_AIM_KI = 0.0;
+        public static final double VISION_AIM_KD = 0.0001;
+        public static final String LIMELIGHT_NAME = "limelight-apr";
     }
 
    
